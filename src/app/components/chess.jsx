@@ -11,7 +11,7 @@ function Top() {
 }
 //Chess component
 //Code from: https://github.com/Clariity/react-chessboard
-function Chessy(){
+function Chessy(props){
     const [game, setGame] = useState(new Chess());
     useEffect(() => {
       window.navigator.geolocation.getCurrentPosition(
@@ -26,7 +26,7 @@ function Chessy(){
     function makeAMove(move) {
       const gameCopy= new Chess();
       gameCopy.loadPgn(game.pgn());
-      // console.log(move);
+      console.log(move,'move stats', game.turn());
       // console.log(move.from.sourceSquare);
       move = {
         from: move.from.sourceSquare,
@@ -59,7 +59,9 @@ function Chessy(){
       const possibleMoves = game.moves();
       if (game.isGameOver() || game.isDraw() || possibleMoves.length === 0) return; // exit if the game is over
       const randomIndex = Math.floor(Math.random() * possibleMoves.length);
-      makeAMove(possibleMoves[randomIndex]);
+      
+      game.move(possibleMoves[randomIndex]);
+      return <Chessboard position={game.fen()} onDrop={onDropy} />
     }
   
     function onDropy(sourceSquare, targetSquare) {
@@ -75,6 +77,13 @@ function Chessy(){
       // setTimeout(makeRandomMove, 200);
       return true;
     }
+    // Runs CPU opponent if Random mode is activated
+    if(props.randy && game.turn() ==='b')
+    {
+      console.log(game.turn());
+      makeRandomMove();
+    }
+    console.log(game.turn());
   
     return <Chessboard position={game.fen()} onDrop={onDropy} />;
   }
